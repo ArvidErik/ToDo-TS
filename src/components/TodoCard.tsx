@@ -1,59 +1,108 @@
-import React, { useRef } from 'react'
-import { Todo } from '../model'
-import { BiSolidEdit } from 'react-icons/bi'
-import { MdDelete } from 'react-icons/md'
-import { BsFillCheckCircleFill } from 'react-icons/bs'
-import { ifError } from 'assert'
+import React, { useEffect, useRef, useState } from "react";
+import { Todo } from "../model";
+import { BiSolidEdit } from "react-icons/bi";
+import { MdDelete } from "react-icons/md";
+import { BsFillCheckCircleFill } from "react-icons/bs";
+import { ifError } from "assert";
+import { Draggable } from "react-beautiful-dnd";
 
 type Props = {
-    todo: Todo,
-    todos: Todo[],
-    setTodos: React.Dispatch<React.SetStateAction<Todo[]>>
-}
+  index: number;
+  todo: Todo;
+  todos: Todo[];
+  setTodos: React.Dispatch<React.SetStateAction<Todo[]>>;
+};
 
-const TodoCard = ({todo, todos, setTodos}:Props) => {
+const TodoCard = ({ index, todo, todos, setTodos }: Props) => {
+  const textRef = useRef<HTMLParagraphElement>(null);
+  const cardRef = useRef<HTMLFormElement>(null);
+  const [edit, setEdit] = useState<boolean>(false);
+  const [editTodo, setEditTodo] = useState<string>(todo.todo);
 
-  const textRef = useRef<HTMLParagraphElement>(null)
-  const cardRef = useRef<HTMLFormElement>(null)
-
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const removeTodo = () => {
+    const newArr = [...todos].filter((t) => {
+      return t.id !== todo.id;
+    });
+    setTodos(newArr);
+  };
 
-    const newArr = [...todos].filter((t)=>{
-        return t.id !== todo.id
-    })
-    setTodos(newArr)
-  }
+  const checkTodo = (id: number) => {
+    setTodos(
+      todos.map((todo) =>
+        todo.id === id ? { ...todo, isDone: !todo.isDone } : todo
+      )
+    );
+  };
 
-  const checkTodo = () => {
+  const handleEdit = (e: React.FormEvent, id: number) => {
+    e.preventDefault();
 
-    if (textRef.current?.classList.contains("underlined")) {
-        textRef.current?.classList.remove("underlined")
-        cardRef.current?.classList.remove("lighter")
-    } else {
-        textRef.current?.classList.add("underlined")
-        cardRef.current?.classList.add("lighter")
-    }
-  }
+    setTodos(
+      todos.map((todo) => (todo.id === id ? { ...todo, todo: editTodo } : todo))
+    );
+    setEdit(false);
+  };
 
+  useEffect(() => {
+    inputRef.current?.focus();
+  }, [edit]);
 
   return (
-    <form className='todo-card' ref={cardRef}>
-        <p className='todo-card-text' ref={textRef}>{todo.todo}</p>
+    <Draggable draggableId={todo.id.toString()} index={index}>
+      {(provided, snapshot) => (
+        <form
+          className={`todo-card ${snapshot.isDragging&&"drag"}`}
+          ref={provided.innerRef}
+          onSubmit={(e) => handleEdit(e, todo.id)}
+          {...provided.draggableProps}
+          {...provided.dragHandleProps}
+        >
+          {edit ? (
+            <input
+              value={editTodo}
+              onChange={(e) => setEditTodo(e.target.value)}
+              className="todo-card-input"
+              ref={inputRef}
+            />
+          ) : todo.isDone ? (
+            <p className="todo-card-text underlined" ref={textRef}>
+              {todo.todo}
+            </p>
+          ) : (
+            <p className="todo-card-text" ref={textRef}>
+              {todo.todo}
+            </p>
+          )}
 
-        <div>
-            <span className="icon" id='edit-icon'>
-                <BiSolidEdit/>
+          <div>
+            <span
+              className="icon"
+              id="edit-icon"
+              onClick={() => {
+                if (!edit && !todo.isDone) {
+                  setEdit(!edit);
+                }
+              }}
+            >
+              <BiSolidEdit />
             </span>
-            <span className="icon" id='delete-icon' onClick={removeTodo}>
-                <MdDelete/>
+            <span className="icon" id="delete-icon" onClick={removeTodo}>
+              <MdDelete />
             </span>
-            <span className="icon" id='check-icon' onClick={checkTodo}>
-                <BsFillCheckCircleFill/>
+            <span
+              className="icon"
+              id="check-icon"
+              onClick={() => checkTodo(todo.id)}
+            >
+              <BsFillCheckCircleFill />
             </span>
-        </div>
-    </form>
-  )
-}
+          </div>
+        </form>
+      )}
+    </Draggable>
+  );
+};
 
-export default TodoCard
+export default TodoCard;

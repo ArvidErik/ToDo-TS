@@ -1,4 +1,5 @@
 import React, { useRef } from "react";
+import { IoMdAdd } from 'react-icons/io'
 import "./styles.css";
 
 interface Props {
@@ -27,7 +28,7 @@ const InputField = ({ todo, setTodo, handleAdd }: Props) => {
         onChange={(e) => setTodo(e.target.value)}
       />
       <button type="submit" className="input-submit">
-        Add
+        <IoMdAdd/>
       </button>
     </form>
   );
