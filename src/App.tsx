@@ -3,7 +3,6 @@ import InputField from "./components/InputField";
 import { Todo } from "./model";
 import TodoList from "./components/TodoList";
 import { DragDropContext, DropResult } from "react-beautiful-dnd";
-import { log } from "console";
 
 const App: React.FC = () => {
   const [todo, setTodo] = useState<string>("");

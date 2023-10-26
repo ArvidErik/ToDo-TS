@@ -3,7 +3,6 @@ import { Todo } from "../model";
 import { BiSolidEdit } from "react-icons/bi";
 import { MdDelete } from "react-icons/md";
 import { BsFillCheckCircleFill } from "react-icons/bs";
-import { ifError } from "assert";
 import { Draggable } from "react-beautiful-dnd";
 
 type Props = {
@@ -15,7 +14,6 @@ type Props = {
 
 const TodoCard = ({ index, todo, todos, setTodos }: Props) => {
   const textRef = useRef<HTMLParagraphElement>(null);
-  const cardRef = useRef<HTMLFormElement>(null);
   const [edit, setEdit] = useState<boolean>(false);
   const [editTodo, setEditTodo] = useState<string>(todo.todo);
 
