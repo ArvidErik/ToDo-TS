@@ -64,6 +64,11 @@
     padding: 10px;
 }
 
+.todos-heading{
+    margin-bottom: 10px;
+    font-size: large;
+}
+
 .todo-card{
     display: flex;
     align-items: center;
@@ -113,7 +118,8 @@
 }
 
 .underlined{
-    text-decoration:line-through
+    text-decoration:line-through;
+    opacity: .2;
 }
 
 .lighter {
@@ -151,5 +157,8 @@
 
     .input-form{
         width: 90%;
+    }
+    .container {
+        flex-direction: column;
     }
 }
